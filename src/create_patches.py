@@ -1,11 +1,11 @@
 import os, rasterio, numpy as np
 
-RAW_DIR = "data/"       
-PATCH_DIR = "data/patches"   
+RAW_DIR = "../data/ndvi_data/"       
+PATCH_DIR = "../data/patches/"   
 SIZE = 64
 STRIDE = 64
 
-months = ['jan','feb']
+months = ['jan','feb','mar','apr','may','jun']
 # months = ['jan','feb','mar','apr','may','jun',
 #           'jul','aug','sep','oct','nov','dec']
 

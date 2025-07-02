@@ -1,13 +1,6 @@
-// 1.
-create_patches.py -> crops the tifs to create patches in 'data/patches' directory, monthwise
-
-// 2.
-timeseries.py -> creates 'data/service'
-
-// 3.
-train_simclr.py
-
-// 4. 
-extract_embedding.py -> creates 'embeddings' dir 
-
-// 5. classify??
+1. create_patches.py
+2. timeseries.py
+3. generate_labels.py
+4. train_simclr.py
+5. extract_embedding.py
+6. train_classifier.py

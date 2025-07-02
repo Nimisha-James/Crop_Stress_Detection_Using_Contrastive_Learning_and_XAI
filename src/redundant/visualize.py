@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def show_patch(id):
-    cube = np.load(f"data/series/{id:05d}.npy")
+    cube = np.load(f"../data/series/{id:05d}.npy")
     cube = (cube + 1) / 2
 
     T = cube.shape[0]  # number of months

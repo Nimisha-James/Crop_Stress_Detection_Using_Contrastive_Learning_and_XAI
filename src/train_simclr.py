@@ -5,7 +5,6 @@ from model import Encoder3D
 import torch.optim as optim
 import torch.nn.functional as F
 
-
 def nt_xent(a, b, t=0.2):
     """a,b: [B,128]"""
     a = F.normalize(a, dim=1)
@@ -18,19 +17,21 @@ def nt_xent(a, b, t=0.2):
 
 if __name__ == "__main__":
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     # ‑‑‑ data
-    ds   = NDVITimeSeriesDataset("data/series")
-    loader = DataLoader(ds, batch_size=64, shuffle=True, num_workers=4)
+    ds = NDVITimeSeriesDataset("../data/series/")
+    loader = DataLoader(ds, batch_size=64, shuffle=True, num_workers=0)
 
     # ‑‑‑ model
-    net  = Encoder3D().cuda()
-    opt  = optim.Adam(net.parameters(), lr=3e-4)
+    net = Encoder3D().to(device)
+    opt = optim.Adam(net.parameters(), lr=3e-4)
 
     # ‑‑‑ train
     for epoch in range(50):
         for v1, v2 in loader:
-            v1, v2 = v1.cuda(), v2.cuda()            # [B,12,64,64]
-            z1 = net(v1)                             # [B,128]
+            v1, v2 = v1.to(device), v2.to(device)   # [B,12,64,64]
+            z1 = net(v1)                            # [B,128]
             z2 = net(v2)
             loss = nt_xent(z1, z2)
             opt.zero_grad()
@@ -38,4 +39,4 @@ if __name__ == "__main__":
             opt.step()
         print(f"epoch {epoch:02d}: loss {loss.item():.4f}")
 
-    torch.save(net.state_dict(), "encoder_simclr.pt")
+    torch.save(net.state_dict(), "../models/encoder_simclr.pt")

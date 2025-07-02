@@ -19,7 +19,7 @@
 
 # 2. VIEW PATCH SERIES
 import numpy as np, matplotlib.pyplot as plt
-cube = np.load('data/series/00000.npy')   # [2,64,64]
+cube = np.load('../data/series/00000.npy')   # [2,64,64]
 # cube = (cube + 1) / 2                         # -1‒1 ➜ 0‒1
 
 fig, axes = plt.subplots(1, 2, figsize=(6,3))

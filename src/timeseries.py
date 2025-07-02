@@ -1,11 +1,11 @@
 import os, numpy as np, glob
 from collections import defaultdict
 
-MONTHS = ['jan','feb']
+MONTHS = ['jan','feb','mar','apr','may','jun']
 # MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
 
-DATA_DIR = 'data/patches'
-OUT_DIR = 'data/series'
+DATA_DIR = '../data/patches/'
+OUT_DIR = '../data/series/'
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # har patch ID ke liye list of monthly patches

@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-SERIES_DIR = Path("data/series")            # adjust if your folder is elsewhere
+SERIES_DIR = Path("../data/series/")            # adjust if your folder is elsewhere
 assert SERIES_DIR.is_dir(), f"{SERIES_DIR} not found"
 
 means = []

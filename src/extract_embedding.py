@@ -5,22 +5,26 @@ from model import Encoder3D
 from dataset import NDVITimeSeriesDataset
 from torch.utils.data import DataLoader
 
+# Device config (CPU or GPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # Load model
 model = Encoder3D()
-model.load_state_dict(torch.load("encoder_simclr.pt"))
-model.eval()
-model.cuda()
+model.load_state_dict(torch.load("../models/encoder_simclr.pt", map_location=device))
+model.eval().to(device)
 
 # Load data
-dataset = NDVITimeSeriesDataset("data/series")
+dataset = NDVITimeSeriesDataset("../data/series/")
 loader = DataLoader(dataset, batch_size=64, shuffle=False)
 
-os.makedirs("embeddings", exist_ok=True)
+# Create output directory
+os.makedirs("../data/embeddings", exist_ok=True)
 
+# Extract embeddings
 with torch.no_grad():
     for i, (view1, _) in enumerate(loader):
-        view1 = view1.cuda()
+        view1 = view1.to(device)
         embeddings = model(view1).cpu().numpy()  # shape: [B, 128]
         for j, emb in enumerate(embeddings):
             idx = i * loader.batch_size + j
-            np.save(f"embeddings/{idx:05d}.npy", emb)
+            np.save(f"../data/embeddings/{idx:05d}.npy", emb)

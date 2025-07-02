@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-SERIES_DIR = "data/series"
+SERIES_DIR = "../data/series/"
 THRESHOLD = 0.216  # NDVI threshold for stress
 
 labels = []
@@ -18,7 +18,7 @@ for f in files:
 
 # Save to CSV
 df = pd.DataFrame(labels, columns=["id", "label"])
-df.to_csv("cluster_labels.csv", index=False)
+df.to_csv("../cluster_labels.csv", index=False)
 
 print(f"Saved labels to cluster_labels.csv")
 print(df["label"].value_counts())
