@@ -1,29 +1,37 @@
 import os, numpy as np, glob
+import pandas as pd
 from collections import defaultdict
 
-MONTHS = ['jan','feb','mar','apr','may','jun']
-# MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
+PATCH_DIR = "../data/patches"
+DEST = "../data/series"
+T = 6
+STRIDE = 1
+MONTHS     = ['jan','feb','mar','apr','may','jun']
 
-DATA_DIR = '../data/patches/'
-OUT_DIR = '../data/series/'
-os.makedirs(OUT_DIR, exist_ok=True)
+os.makedirs(DEST, exist_ok=True)
 
-# har patch ID ke liye list of monthly patches
-patch_dict = defaultdict(list)
+series_count = 0
+win = 0
+for i in range(0, len(MONTHS)-T+1, STRIDE):
+    target = MONTHS[i+T-1]
+    window = MONTHS[i:i+T]
+    patch_dict = defaultdict(list)
 
-for m in MONTHS:
-    files = glob.glob(f"{DATA_DIR}/{m}/*.npy")
-    for f in files:
-        patch_id = os.path.basename(f).split('.')[0]  # e.g. "00001"
-        patch = np.load(f)
-        patch_dict[patch_id].append(patch)
+    win_dir = DEST + f"/{win:02d}"
+    os.makedirs(win_dir, exist_ok=True)
 
-# Ab sirf unhi patches ko save karo jo 12 months ke hain
-count = 0
-for patch_id, patches in patch_dict.items():
-    if len(patches) == len(MONTHS):
-        series = np.stack(patches, axis=0)  # [12, 64, 64]
-        np.save(f"{OUT_DIR}/{patch_id}.npy", series)
-        count += 1
+    for m in window:
+        for f in glob.glob(f"{PATCH_DIR}/{m}/*.npy"):
+            pid = os.path.splitext(os.path.basename(f))[0]
+            patch_dict[pid].append((m, f))
 
-print(f"{count} time series patches saved in '{OUT_DIR}'")
+    for pid, files in patch_dict.items():
+        if len(files) == T:
+            files.sort(key=lambda x: window.index(x[0]))
+            stack = np.stack([np.load(f[1]) for f in files], axis=0)
+            out_path = f"{win_dir}/{win:02d}_{pid}.npy"
+            np.save(out_path, stack)
+            series_count += 1
+    win+=1
+
+print(f"{series_count} sliding-window time series saved to '{DEST}'")

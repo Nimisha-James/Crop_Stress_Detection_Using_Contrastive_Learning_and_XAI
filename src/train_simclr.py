@@ -24,13 +24,14 @@ if __name__ == "__main__":
     loader = DataLoader(ds, batch_size=64, shuffle=True, num_workers=0)
 
     # ‑‑‑ model
-    net = Encoder3D().to(device)
+    C=1
+    net = Encoder3D(in_ch=C).to(device)
     opt = optim.Adam(net.parameters(), lr=3e-4)
 
     # ‑‑‑ train
     for epoch in range(50):
         for v1, v2 in loader:
-            v1, v2 = v1.to(device), v2.to(device)   # [B,12,64,64]
+            v1, v2 = v1.to(device), v2.to(device)   # [B,T, C,64,64]
             z1 = net(v1)                            # [B,128]
             z2 = net(v2)
             loss = nt_xent(z1, z2)

@@ -9,7 +9,8 @@ from torch.utils.data import DataLoader
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load model
-model = Encoder3D()
+C = 1
+model = Encoder3D(in_ch=C)
 model.load_state_dict(torch.load("../models/encoder_simclr.pt", map_location=device))
 model.eval().to(device)
 
@@ -27,4 +28,6 @@ with torch.no_grad():
         embeddings = model(view1).cpu().numpy()  # shape: [B, 128]
         for j, emb in enumerate(embeddings):
             idx = i * loader.batch_size + j
-            np.save(f"../data/embeddings/{idx:05d}.npy", emb)
+            src = dataset.files[idx]
+            name = os.path.splitext(os.path.basename(src))[0]
+            np.save(f"../data/embeddings/{name}.npy", emb)
