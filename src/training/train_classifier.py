@@ -11,7 +11,7 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import StackingClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, accuracy_score
+#from sklearn.metrics import classification_report, accuracy_score
 import lightgbm as lgb
 import warnings
 warnings.filterwarnings("ignore")
@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore")
 
 # Load actual dataset
 print("Loading data...")
-df = pd.read_csv("../data/csv_data/stress_cluster_labels.csv")
-X = np.stack([np.load(f"../data/embeddings/00_{i:05d}.npy") for i in df["id"]])
+df = pd.read_csv("../../data/csv_data/stress_cluster_labels.csv")
+X = np.stack([np.load(f"../../data/embeddings/00_{i:05d}.npy") for i in df["id"]])
 y = df["label"].values
 
 # Train-test split
@@ -68,5 +68,5 @@ best_model = random_search.best_estimator_
 
 # Save model
 os.makedirs("models", exist_ok=True)
-joblib.dump(best_model, "../models/stress_classifier.pkl")
-print("\n✅ Model saved to ../models/stress_classifier.pkl")
+joblib.dump(best_model, "../../models/stress_classifier.pkl")
+print("\n✅ Model saved to ../../models/stress_classifier.pkl")

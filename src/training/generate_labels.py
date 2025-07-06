@@ -5,7 +5,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-SERIES_DIR = "../data/series/00"
+SERIES_DIR = "../../data/series/00"
 labels = []
 
 # Step 1: Extract feature vectors for each patch
@@ -40,8 +40,8 @@ for idx, pred in zip(file_ids, preds):
 
 # Step 4: Save CSV
 df = pd.DataFrame(labels, columns=["id", "label"])
-df.to_csv("../data/csv_data/stress_cluster_labels.csv", index=False)
-print("Saved labels to ../data/csv_data/stress_cluster_labels.csv")
+df.to_csv("../../data/csv_data/stress_cluster_labels.csv", index=False)
+print("Saved labels to ../../data/csv_data/stress_cluster_labels.csv")
 
 # Step 5: Plot 2D PCA
 pca = PCA(n_components=2)
@@ -55,5 +55,5 @@ plt.xlabel("PCA 1")
 plt.ylabel("PCA 2")
 plt.grid(True, linestyle="--", alpha=0.5)
 plt.tight_layout()
-plt.savefig("../outputs/label_pca_scatter.png")
+plt.savefig("../../outputs/label_pca_scatter.png")
 plt.show()

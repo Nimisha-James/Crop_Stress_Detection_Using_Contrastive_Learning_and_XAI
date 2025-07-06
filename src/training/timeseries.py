@@ -4,8 +4,8 @@ import numpy as np
 import glob
 from collections import defaultdict
 
-PATCH_DIR = "../data/patches"
-DEST = "../data/series"
+PATCH_DIR = "../../data/patches"
+DEST = "../../data/series"
 T = 6
 STRIDE = 1
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun']

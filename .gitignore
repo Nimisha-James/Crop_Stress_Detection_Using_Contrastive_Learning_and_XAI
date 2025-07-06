@@ -1,6 +1,11 @@
 data/embeddings/
 data/multi_data/
-data/new_data/
+data/remain_data/
 data/patches/
 data/series/
+new_data/2024_multi_data/
+new_data/2024_remain_data/
+new_data/new_patches/
+new_data/new_series/
+new_data/output_predictions/
 src/catboost_info/

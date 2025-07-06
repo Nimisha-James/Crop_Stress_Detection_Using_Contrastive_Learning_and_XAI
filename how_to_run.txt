@@ -1,6 +1,16 @@
+To train ---------------------------------------------------
+
+Go in training folder
+
 1. create_patches.py
 2. timeseries.py
 3. generate_labels.py
 4. train_simclr.py
 5. extract_embedding.py
 6. train_classifier.py
+
+
+To test ----------------------------------------------
+
+1. predict_stress.py
+2. shap_explain.py

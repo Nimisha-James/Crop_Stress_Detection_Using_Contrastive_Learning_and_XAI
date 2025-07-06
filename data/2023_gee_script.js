@@ -50,7 +50,7 @@ months.getInfo().forEach(function(m) {
   Export.image.toDrive({
     image: indices,
     description: 'Indices_' + monthName + '_2023',
-    folder: 'GEE_MultiIndex_Year',
+    folder: 'GEE_MultiIndex_2023',
     fileNamePrefix: 'multi_' + monthName + '_2023',
     region: roi,
     scale: 10,

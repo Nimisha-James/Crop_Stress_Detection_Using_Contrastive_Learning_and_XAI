@@ -36,7 +36,7 @@ def collate_skip_none(batch):
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    ds = MultimodalTimeSeriesDataset("../data/series/00")
+    ds = MultimodalTimeSeriesDataset("../../data/series/00")
     loader = DataLoader(ds, batch_size=64, shuffle=True, num_workers=0)
 
     C = 5
@@ -66,7 +66,7 @@ if __name__ == "__main__":
             epoch_losses.append(last_loss)
             print(f"epoch {epoch+1:02d}: loss {last_loss:.4f}")
 
-    torch.save(net.state_dict(), "../models/encoder_simclr.pt")
+    torch.save(net.state_dict(), "../../models/encoder_simclr.pt")
 
     # Plot loss curve
     plt.figure(figsize=(8, 5))
@@ -78,5 +78,5 @@ if __name__ == "__main__":
     plt.xticks(range(1, 51, 2))
     plt.legend()
     plt.tight_layout()
-    plt.savefig("../outputs/simclr_loss_curve.png")
+    plt.savefig("../../outputs/simclr_loss_curve.png")
     plt.show()

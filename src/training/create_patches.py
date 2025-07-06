@@ -6,16 +6,16 @@ import csv
 import pandas as pd
 from pathlib import Path
 
-RAW_DIR = "../data/multi_data"
-PATCH_DIR = "../data/patches"
+RAW_DIR = "../../data/multi_data"
+PATCH_DIR = "../../data/patches"
 SIZE = 64
 STRIDE = 64
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun']
 
 os.makedirs(PATCH_DIR, exist_ok=True)
 
-unclean_csv_path = "../data/csv_data/patch_unclean.csv"
-clean_csv_path = "../data/csv_data/patch_meta.csv"
+unclean_csv_path = "../../data/csv_data/patch_unclean.csv"
+clean_csv_path = "../../data/csv_data/patch_meta.csv"
 
 # STEP 1: Create and write metadata file
 with open(unclean_csv_path, "w", newline="") as meta:
