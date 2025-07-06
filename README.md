@@ -1,5 +1,6 @@
 ** PROJECT DIRECTORY STRUCTURE **
 
+```plaintext
 Crop_Stress_Detection_Using_Contrastive_Learning_and_XAI/
 ├── data/
 │   ├── csv_data/
