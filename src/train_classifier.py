@@ -1,89 +1,69 @@
 import os
+import joblib
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
-import joblib
-
-import xgboost as xgb
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import StackingClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report, accuracy_score
 import lightgbm as lgb
+import warnings
+warnings.filterwarnings("ignore")
 
-# --- Load Data ---
-print("Loading labels and embeddings...")
-df = pd.read_csv("../cluster_labels.csv")
 
-X = np.stack([
-    np.load(f"../data/embeddings/{i:05d}.npy")
-    for i in df["id"]
-])
+# Load actual dataset
+print("Loading data...")
+df = pd.read_csv("../data/csv_data/stress_cluster_labels.csv")
+X = np.stack([np.load(f"../data/embeddings/00_{i:05d}.npy") for i in df["id"]])
 y = df["label"].values
 
-# --- Split Dataset ---
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, stratify=y, random_state=42
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Base models
+svm = make_pipeline(StandardScaler(), SVC(probability=True, random_state=42))
+lgbm = lgb.LGBMClassifier(objective='binary', is_unbalance=True, random_state=42)
+
+# Stacking model
+stack_model = StackingClassifier(
+    estimators=[('svm', svm), ('lgbm', lgbm)],
+    final_estimator=LogisticRegression(max_iter=1000),
+    passthrough=False,
+    cv=5,
+    n_jobs=-1
 )
 
+# Parameter grid
+param_grid = {
+    'svm__svc__C': [0.1, 1, 10],
+    'lgbm__n_estimators': [50, 100],
+    'lgbm__max_depth': [3, 5],
+    'final_estimator__C': [0.1, 1, 10]
+}
 
-
-# --- XGBoost Training ---
-print("\nTraining XGBoost model...")
-xgb_model = xgb.XGBClassifier(
-    objective='binary:logistic',
-    eval_metric='logloss',
-    use_label_encoder=False,
-    scale_pos_weight=(len(y_train) / np.sum(y_train) - 1),  # imbalance handling
-    n_estimators=100,
-    learning_rate=0.05,
-    max_depth=4,
+# Randomized Search
+random_search = RandomizedSearchCV(
+    estimator=stack_model,
+    param_distributions=param_grid,
+    n_iter=10,
+    cv=3,
+    scoring='accuracy',
+    verbose=2,
+    n_jobs=-1,
     random_state=42
 )
-xgb_model.fit(X_train, y_train)
 
-y_pred_xgb = xgb_model.predict(X_test)
-print("\n=== XGBoost Results ===")
-print(classification_report(y_test, y_pred_xgb))
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_xgb)) 
+# Train the model
+print("Training model...")
+random_search.fit(X_train, y_train)
 
-os.makedirs("outputs", exist_ok=True)
-joblib.dump(xgb_model, "../models/xgb_classifier.pkl")
-print("\nModel saved to models/xgb_classifier.pkl")
+# Best model
+best_model = random_search.best_estimator_
 
-
-
-# --- LightGBM Training ---
-print("\nTraining LightGBM model...")
-lgb_model = lgb.LGBMClassifier(
-    objective='binary',
-    is_unbalance=True,
-    n_estimators=100,
-    learning_rate=0.05,
-    max_depth=4,
-    random_state=42
-)
-lgb_model.fit(X_train, y_train)
-
-y_pred_lgb = lgb_model.predict(X_test)
-print("\n=== LightGBM Results ===")
-print(classification_report(y_test, y_pred_lgb))
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_lgb))
-
-os.makedirs("outputs", exist_ok=True)
-joblib.dump(lgb_model, "../models/lgb_classifier.pkl")
-print("\nModel saved to modelss/lgb_classifier.pkl")
-
-
-'''
---- Plot Feature Importance ---
-ig, axs = plt.subplots(1, 2, figsize=(14, 5))
-
-# --- XGBoost plot
-xgb.plot_importance(xgb_model, ax=axs[0], max_num_features=10)
-axs[0].set_title("XGBoost Feature Importance")
-
-# --- LightGBM plot
-lgb.plot_importance(lgb_model, ax=axs[1], max_num_features=10)
-axs[1].set_title("LightGBM Feature Importance")
-
-plt.tight_layout()
-plt.show()'''
+# Save model
+os.makedirs("models", exist_ok=True)
+joblib.dump(best_model, "../models/stress_classifier.pkl")
+print("\n✅ Model saved to ../models/stress_classifier.pkl")

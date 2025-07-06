@@ -1,35 +1,39 @@
-import glob
+# dataset.py
+import os
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-class NDVITimeSeriesDataset(Dataset):
-    def __init__(self, series_dir):
-        self.files = sorted(glob.glob(f"{series_dir}/**/*.npy", recursive=True))
+class MultimodalTimeSeriesDataset(Dataset):
+    def __init__(self, patch_root):
+        self.root = patch_root
+        files = sorted([f for f in os.listdir(self.root) if f.endswith(".npy")])
+        if not files:
+            raise FileNotFoundError(f"No .npy files found in: {self.root}")
+        self.paths = [os.path.join(self.root, f) for f in files]
 
     def __len__(self):
-        return len(self.files)
+        return len(self.paths)
 
     def __getitem__(self, idx):
-        cube = np.load(self.files[idx])     # shape: [T, C, 64, 64]
-        if cube.ndim == 3: cube = cube[:,None]
-        cube = torch.tensor(cube, dtype=torch.float32)   # to torch tensor
+        path = self.paths[idx]
+        try:
+            x = np.load(path)  # [6, 5, 64, 64]
+            #print(f"Loading {path}: shape={x.shape}, min={x.min():.4f}, max={x.max():.4f}, has_nan={np.isnan(x).any()}, has_inf={np.isinf(x).any()}")
+            if np.isnan(x).any() or np.isinf(x).any():
+                raise ValueError("Invalid values in input patch.")
+            
+            # Apply two augmentations for contrastive learning
+            def augment(x):
+                noise = np.random.normal(0, 0.005, x.shape).astype(np.float32)
+                x_aug = x + noise
+                #print(f"After augmentation: min={x_aug.min():.4f}, max={x_aug.max():.4f}, has_nan={np.isnan(x_aug).any()}, has_inf={np.isinf(x_aug).any()}")
+                x_aug = np.clip(x_aug, 0.0, 1.0)
+                #print(f"After clipping: min={x_aug.min():.4f}, max={x_aug.max():.4f}, has_nan={np.isnan(x_aug).any()}, has_inf={np.isinf(x_aug).any()}")
+                return torch.tensor(x_aug, dtype=torch.float32)
 
-        # Create two augmented versions
-        view1 = self.augment(cube.clone())
-        view2 = self.augment(cube.clone())
+            return augment(x), augment(x)
 
-        return view1, view2
-
-    def augment(self, x):
-        # Add small random noise (jitter)
-        x += torch.randn_like(x) * 0.02
-
-        # Random time masking: set 1 month to NaN
-        if torch.rand(1) < 0.5:x[torch.randint(0,x.size(0),(1,))] = torch.nan
-
-        # (Optional) Normalization to [0, 1]
-        x = (x + 1) / 2
-        x = torch.nan_to_num(x, nan=0.0)  # Replace NaNs with 0
-
-        return x
+        except Exception as e:
+            print(f"Error loading {path}: {e}")
+            return None

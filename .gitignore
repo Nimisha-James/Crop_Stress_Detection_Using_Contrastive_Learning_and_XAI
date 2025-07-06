@@ -1,1 +1,5 @@
-data/
+data/embeddings/
+data/multi_data/
+data/new_data/
+data/patches/
+data/series/

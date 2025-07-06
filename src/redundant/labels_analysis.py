@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load your dataset (e.g., labels)
-df = pd.read_csv("cluster_labels.csv")  # or your own file
+df = pd.read_csv("../../data/csv_data/stress_cluster_labels.csv")  # or your own file
 print(df["label"].value_counts())       # count of 0s and 1s
 
 # Plot bar chart
