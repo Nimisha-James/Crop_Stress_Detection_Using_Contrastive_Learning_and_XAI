@@ -9,9 +9,9 @@ import joblib
 # Ensure training directory in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'training')))
 
-from model import Encoder3D
-from generate_patches_test import extract_patches_from_folder
-from timeseries_test import generate_series
+from training.model import Encoder3D
+from testing.generate_patches_test import extract_patches_from_folder
+from testing.timeseries_test import generate_series
 
 # Suppress scikit-learn and joblib warnings
 import warnings
@@ -21,12 +21,12 @@ warnings.filterwarnings("ignore", category=UserWarning, module="joblib")
 
 # CONFIG
 MONTHS = ['mar', 'apr', 'may', 'oct', 'nov', 'dec']
-RAW_DATA_DIR = "../../new_data/2024_multi_data"
-PATCH_DIR = "../../new_data/new_patches"
-SERIES_DIR = "../../new_data/new_series/00"
-CLASSIFIER_PATH = "../../models/stress_classifier.pkl"
-ENCODER_PATH = "../../models/encoder_simclr.pt"
-OUTPUT_PRED_DIR = "../../new_data/output_predictions"
+RAW_DATA_DIR = "../new_data/2024_multi_data"
+PATCH_DIR = "../new_data/new_patches"
+SERIES_DIR = "../new_data/new_series/00"
+CLASSIFIER_PATH = "../models/stress_classifier.pkl"
+ENCODER_PATH = "../models/encoder_simclr.pt"
+OUTPUT_PRED_DIR = "../new_data/output_predictions"
 os.makedirs(OUTPUT_PRED_DIR, exist_ok=True)
 
 # Step 1: Preprocessing
