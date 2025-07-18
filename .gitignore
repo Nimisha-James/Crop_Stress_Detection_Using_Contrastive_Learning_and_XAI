@@ -13,3 +13,4 @@ new_data/output_predictions/
 src/catboost_info/
 outputs/gradcam/*_cam.png
 !outputs/gradcam/000??_cam.png
+docs/

@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore", category=Warning, module="sklearn")
 MONTHS = ['mar', 'apr', 'may', 'oct', 'nov', 'dec']
 CLASSIFIER_PATH = "../../models/stress_classifier.pkl"
 PREDICTION_DIR = "../../new_data/output_predictions"
-EXPLAIN_DIR = "../../outputs/shap_explanations"
+EXPLAIN_DIR = "../../outputs/shap_explanations_2"
 os.makedirs(EXPLAIN_DIR, exist_ok=True)
 
 # Load classifier
@@ -57,10 +57,10 @@ for month in MONTHS:
         print(f"[ERROR] Failed to compute SHAP values for {month}: {e}")
         continue
 
-    # Save SHAP summary plot
+    # Save SHAP summary plot for top 10 features
     summary_path = os.path.join(EXPLAIN_DIR, f"{month}_summary.png")
     try:
-        shap.summary_plot(shap_values, X, feature_names=feature_names, show=False)
+        shap.summary_plot(shap_values, X, feature_names=feature_names, max_display=10, show=False)
         plt.title(f"SHAP Summary - {month.capitalize()}")
         plt.savefig(summary_path, bbox_inches='tight')
         plt.clf()

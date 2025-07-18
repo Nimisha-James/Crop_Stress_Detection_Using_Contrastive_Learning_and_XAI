@@ -1,9 +1,12 @@
+import sys
 import os, argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'training')))
 
 from training.model   import Encoder3D
 from training.dataset import MultimodalTimeSeriesDataset
@@ -34,17 +37,17 @@ class GradCAM3D:
         return cam.cpu()                       # [T,H,W]
     
 def main():
-    os.makedirs("../outputs/gradcam", exist_ok=True)
+    os.makedirs("../../outputs/gradcam", exist_ok=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model  = Encoder3D(in_ch=5).to(device)
-    model.load_state_dict(torch.load("../models/encoder_simclr.pt",map_location=device))
+    model.load_state_dict(torch.load("../../models/encoder_simclr.pt",map_location=device))
 
     target_layer = model.conv[0]
     print(model.conv)
     cam_gen = GradCAM3D(model, target_layer)
 
-    ds = MultimodalTimeSeriesDataset("../new_data/new_series/00")
+    ds = MultimodalTimeSeriesDataset("../../new_data/new_series/00")
     loader = DataLoader(ds, batch_size=1, shuffle=False)
 
     for n, (v1, v2) in enumerate(loader):
@@ -78,7 +81,7 @@ def main():
 
         plt.tight_layout(h_pad=0.3, w_pad=0.3)
         fig.supxlabel(f"Patch ID {patch_id}", fontsize=12)
-        out_png = f"../outputs/gradcam/{patch_id}_cam.png"
+        out_png = f"../../outputs/gradcam/{patch_id}_cam.png"
         plt.savefig(out_png, dpi=140)
         plt.close()
         print(f"✓ Saved CAM row → {out_png}")

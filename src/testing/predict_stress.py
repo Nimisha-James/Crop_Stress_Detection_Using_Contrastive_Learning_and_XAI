@@ -21,12 +21,12 @@ warnings.filterwarnings("ignore", category=UserWarning, module="joblib")
 
 # CONFIG
 MONTHS = ['mar', 'apr', 'may', 'oct', 'nov', 'dec']
-RAW_DATA_DIR = "../new_data/2024_multi_data"
-PATCH_DIR = "../new_data/new_patches"
-SERIES_DIR = "../new_data/new_series/00"
-CLASSIFIER_PATH = "../models/stress_classifier.pkl"
-ENCODER_PATH = "../models/encoder_simclr.pt"
-OUTPUT_PRED_DIR = "../new_data/output_predictions"
+RAW_DATA_DIR = "../../new_data/2024_multi_data"
+PATCH_DIR = "../../new_data/new_patches"
+SERIES_DIR = "../../new_data/new_series/00"
+CLASSIFIER_PATH = "../../models/stress_classifier.pkl"
+ENCODER_PATH = "../../models/encoder_simclr.pt"
+OUTPUT_PRED_DIR = "../../new_data/output_predictions"
 os.makedirs(OUTPUT_PRED_DIR, exist_ok=True)
 
 # Step 1: Preprocessing
